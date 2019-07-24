@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Appenders -->
+	<appender name="stderr" class="org.apache.log4j.ConsoleAppender">
+		<param name="threshold" value="warn" />
+		<param name="target" value="System.err" />
+		<layout class="org.apache.log4j.EnhancedPatternLayout">
+			<param name="ConversionPattern"
+				value="%t> [%d{yyyy-MM-dd HH:mm:ss}] [%C{1.}] [%M] [%L] [%p] %m %n" />
+		</layout>
+	</appender>
+
+	<!-- Appenders -->
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<param name="threshold" value="debug" />
+		<param name="target" value="System.out" />
+		<layout class="org.apache.log4j.EnhancedPatternLayout">
+			<param name="ConversionPattern"
+				value="%t> [%d{yyyy-MM-dd HH:mm:ss}] [%C{1.}] [%M] [%L] [%p] %m %n" />
+		</layout>
+	</appender>
+
+	<!-- 날짜별 로그 -->
+	<appender name="dailyout" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="./logs/scaffold.log" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'yyMMdd" />
+		<layout class="org.apache.log4j.EnhancedPatternLayout">
+			<param name="ConversionPattern"
+				value="%t> [%d{yyyy-MM-dd HH:mm:ss}] [%C{1.}] [%L] [%p] %m %n" />
+		</layout>
+	</appender>
+
+	<!-- Application Loggers -->
+	<logger name="com.jiwon">
+		<level value="info" />
+	</logger>
+
+	<!-- 3rdparty Loggers -->
+	<logger name="org">
+		<level value="debug" />
+	</logger>
+
+	<logger name="org.quartz">
+		<level value="error" />
+	</logger>
+	
+	<logger name="org.springframework">
+		<level value="info"/>
+	</logger>
+
+	<logger name="org.springframework.core">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.beans">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.context">
+		<level value="info" />
+	</logger>
+
+	<!-- Root Logger -->
+	<root>
+		<priority value="debug" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="stderr" />
+	    <appender-ref ref="dailyout" />
+	</root>
+
+</log4j:configuration>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<context:component-scan base-package="com.jiwon" />
+	<context:annotation-config />
+	<mvc:annotation-driven />
+	<task:annotation-driven executor="myExecutor" scheduler="myScheduler" />
+	<task:executor id="myExecutor" pool-size="5" />
+	<task:scheduler id="myScheduler" pool-size="10" />
+
+	<!-- transaction -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="environmentVariablesConfiguration"
+		class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+		<property name="algorithm" value="PBEWithMD5AndDES" />
+		<property name="password" value="BRACE_PASS" />
+	</bean>
+
+	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+		<property name="config" ref="environmentVariablesConfiguration" />
+	</bean>
+	<beans profile="prod">
+		<bean id="propertyConfigurer"
+			class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
+			<constructor-arg ref="configurationEncryptor" />
+			<property name="locations">
+				<list>
+					<value>classpath:config/jdbc-mysql.properties</value>
+				</list>
+			</property>
+		</bean>
+	</beans>
+	
+	<beans profile="dev,default">
+		<bean id="propertyConfigurer"
+			class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
+			<constructor-arg ref="configurationEncryptor" />
+			<property name="locations">
+				<list>
+					<value>classpath:config/jdbc-mysql-dev.properties</value>
+				</list>
+			</property>
+		</bean>
+	</beans>
+</beans>
